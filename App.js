@@ -18,9 +18,9 @@ const DATA = [
 class App extends React.Component {
   renderCard(item) {
     return (
-      <Card title={item.text} image={{ uri: item.uri }}>
+      <Card key={item.id} title={item.text} image={{ uri: item.uri }}>
         <Text style={{ marginBottom: 10 }}>Customize the card!</Text>
-        <Button icon={{ name: 'code' }} backgroundColor="#03A9F4" title="View Nowe" />
+        <Button icon={{ name: 'code' }} backgroundColor="#03A9F4" title="View Now!" />
       </Card>
     );
   }
