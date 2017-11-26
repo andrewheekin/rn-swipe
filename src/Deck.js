@@ -19,14 +19,22 @@ class Deck extends Component {
   }
 
   renderCards() {
-    return this.props.data.map(item => this.props.renderCard(item));
+    return this.props.data.map((item, index) => {
+      if (index === 0) {
+        return (
+          <Animated.View {...this.state.panResponder.panHandlers} style={this.state.position.getLayout()}>{this.props.renderCard(item)}</Animated.View>
+        )
+      }
+
+      return this.props.renderCard(item)
+    });
   }
 
   render() {
     return (
-      <Animated.View {...this.state.panResponder.panHandlers} style={this.state.position.getLayout()}>
+      <View >
         {this.renderCards()}
-      </Animated.View>
+      </View>
     );
   }
 }
