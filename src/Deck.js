@@ -96,7 +96,7 @@ class Deck extends Component {
         );
       }
 
-      return <View style={styles.cardStyle}>{this.props.renderCard(item)}</View>;
+      return <Animated.View style={styles.cardStyle}>{this.props.renderCard(item)}</Animated.View>;
     }).reverse(); // reverse the card list to get proper order
   }
 
