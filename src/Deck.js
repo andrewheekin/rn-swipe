@@ -36,18 +36,24 @@ class Deck extends Component {
     this.state = { panResponder, position, index: 0 };
   }
 
-  // move the card back to starting position if not fully swiped
-  resetPosition() {
-    Animated.spring(this.state.position, {
-      toValue: { x: 0, y: 0 },
-    }).start();
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data !== this.props.data) {
+      this.setState({ index: 0 });
+    }
   }
 
   componentWillUpdate() {
     // line for android to make sure this function exists
     UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
-    // animate the updating component
+    // animate the updating component (think this is basically like a CSS transition on all properties)
     LayoutAnimation.spring();
+  }
+
+  // move the card back to starting position if not fully swiped
+  resetPosition() {
+    Animated.spring(this.state.position, {
+      toValue: { x: 0, y: 0 },
+    }).start();
   }
 
   // move the card to fully swiped if it passes the threshold
