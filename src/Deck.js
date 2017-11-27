@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Animated, PanResponder, Dimensions } from 'react-native';
+import { View, Animated, PanResponder, Dimensions, LayoutAnimation, UIManager } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
@@ -43,6 +43,13 @@ class Deck extends Component {
     }).start();
   }
 
+  componentWillUpdate() {
+    // line for android to make sure this function exists
+    UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+    // animate the updating component
+    LayoutAnimation.spring();
+  }
+
   // move the card to fully swiped if it passes the threshold
   forceSwipe(direction) {
     const x = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
@@ -79,25 +86,36 @@ class Deck extends Component {
       return this.props.renderNoMoreCards();
     }
 
-    return this.props.data.map((item, idx) => {
-      if (idx < this.state.index) {
-        return null;
-      }
+    return this.props.data
+      .map((item, idx) => {
+        if (idx < this.state.index) {
+          return null;
+        }
 
-      if (idx === this.state.index) {
+        // render the top card
+        if (idx === this.state.index) {
+          return (
+            <Animated.View
+              key={item.id}
+              {...this.state.panResponder.panHandlers}
+              style={[this.getCardStyle(), styles.cardStyle]}
+            >
+              {this.props.renderCard(item)}
+            </Animated.View>
+          );
+        }
+
+        // render the cards not on top
         return (
           <Animated.View
+            style={[styles.cardStyle, { top: 10 * (idx - this.state.index), left: 3 * (idx - this.state.index) }]}
             key={item.id}
-            {...this.state.panResponder.panHandlers}
-            style={[this.getCardStyle(), styles.cardStyle]}
           >
             {this.props.renderCard(item)}
           </Animated.View>
         );
-      }
-
-      return <Animated.View style={styles.cardStyle}>{this.props.renderCard(item)}</Animated.View>;
-    }).reverse(); // reverse the card list to get proper order
+      })
+      .reverse(); // reverse the card list to get proper order
   }
 
   render() {
