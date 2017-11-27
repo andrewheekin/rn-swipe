@@ -36,12 +36,14 @@ class Deck extends Component {
     this.state = { panResponder, position, index: 0 };
   }
 
+  // move the card back to starting position if not fully swiped
   resetPosition() {
     Animated.spring(this.state.position, {
       toValue: { x: 0, y: 0 },
     }).start();
   }
 
+  // move the card to fully swiped if it passes the threshold
   forceSwipe(direction) {
     const x = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
     Animated.timing(this.state.position, {
@@ -84,19 +86,30 @@ class Deck extends Component {
 
       if (idx === this.state.index) {
         return (
-          <Animated.View key={item.id} {...this.state.panResponder.panHandlers} style={this.getCardStyle()}>
+          <Animated.View
+            key={item.id}
+            {...this.state.panResponder.panHandlers}
+            style={[this.getCardStyle(), styles.cardStyle]}
+          >
             {this.props.renderCard(item)}
           </Animated.View>
         );
       }
 
-      return this.props.renderCard(item);
-    });
+      return <View style={styles.cardStyle}>{this.props.renderCard(item)}</View>;
+    }).reverse(); // reverse the card list to get proper order
   }
 
   render() {
     return <View>{this.renderCards()}</View>;
   }
 }
+
+const styles = {
+  cardStyle: {
+    position: 'absolute',
+    width: SCREEN_WIDTH,
+  },
+};
 
 export default Deck;
